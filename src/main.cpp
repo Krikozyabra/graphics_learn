@@ -1,4 +1,8 @@
 #include "config.h"
+#include "shaderClass.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 using namespace std;
 
@@ -7,16 +11,21 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-string get_shader_source(const char* filepath){
-    ifstream sfile(filepath);
-    if(!sfile.is_open()){
-        cerr << "Error opening file: " << filepath << endl;
-        return 0;
-    }
-    stringstream sbuffer;
-    sbuffer << sfile.rdbuf();
-    return sbuffer.str();
-}
+// Определение углов треугольника
+GLfloat vertices[] = {
+    -0.5f, -0.5f * float(sqrt(3)) / 3, // нижний левый угол
+    0.5f, -0.5f * float(sqrt(3)) / 3, // нижний правый уго
+    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, // верхний угол
+    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, // между 1 и 3
+    0.5f / 2, 0.5f * float(sqrt(3)) / 6, // между 2 и 3
+    0.0f, -0.5f * float(sqrt(3)) / 3 // между 2 и 1
+};
+
+GLuint indicies[] = {
+    0, 3, 5, // Нижний левый треугольник
+    3, 2, 4, // Нижний правый треугольник
+    5, 4, 1 // Верхний треугольник
+};
 
 int main()
 {
@@ -28,17 +37,13 @@ int main()
     }
 
 
-    // glfwWindowHint(GLFW_SAMPLES, 4); <- Устанавливает MSAA x4, это озназачает, что каждый пиксель на экране, будет высчитываться из 4 из буфера. Те буфер должен быть в 4 рааз больше
+    glfwWindowHint(GLFW_SAMPLES, 4); // <- Устанавливает MSAA x4, это озназачает, что каждый пиксель на экране, будет высчитываться из 4 из буфера. Те буфер должен быть в 4 рааз больше
     // Указание версии GLFW, в моем случае 3.3 и версия OpenGL, в моем случае Core Profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLfloat vertices[] = {
-        -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-        0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-        0.0f, 0.5f * float(sqrt(3)) / 3, 0.0f
-    };
+    
 
     //Создание окна, первый NULL отвечает за конфигурацию монитора, второй за наличие родителя, например, какое-то первое окно
     GLFWwindow* window;
@@ -63,84 +68,42 @@ int main()
     // Создание callback на изменение размера окна, чтобы потом изменить размер буфера
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Считываем код шейдера вершин
-    string vss = get_shader_source("D:/Projects/graphics/src/shaders/default.vert");
-    const char* vssource_c_str = vss.c_str();
-    // Создание объекта шейдера
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    // Указание исходного кода шейдера
-    glShaderSource(vertexShader, 1, &vssource_c_str, NULL);
-    // Компиляция шейдера
-    glCompileShader(vertexShader);
+    Shader myShader("D:\\Projects\\graphics\\src\\shaders\\default.vert",
+        "D:\\Projects\\graphics\\src\\shaders\\default.frag");
 
-    int success;
-    char infoLog[512];
+    VAO VAO1;
+    VAO1.Bind();
 
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        cout << "Vertex shader error:\n" << infoLog << endl;
-    }
+    VBO VBO1(vertices, sizeof(vertices));
+    EBO EBO1(indicies, sizeof(indicies));
 
-    // Считываем код шейдера фрагментов
-    string fss = get_shader_source("D:/Projects/graphics/src/shaders/default.frag");
-    const char* fssource_c_str = fss.c_str();
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fssource_c_str, NULL);
-    glCompileShader(fragmentShader);
+    VAO1.LinkVBO(VBO1, 0);
 
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success){
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        cout << "Fragment shader error:\n" << infoLog << endl;
-    }
+    VAO1.Unbind();
+    VBO1.Unbind();
+    EBO1.Unbind();
 
-    // Создание программы, которая будет работать с шейдерами
-    GLuint shaderProgram = glCreateProgram();
-    // Связка шейдеров с программой
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    // Привязка программы к окну
-    glLinkProgram(shaderProgram);
-
-    // Очищаем память, так как эти шейдеры уже внутри программы
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    GLuint VAO, VBO;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // Определяем цвет фона окна
+    // Определение цвета фона окна
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-    // Очищаем задний буффер и назначаем новые цвета
+    // Очистка заднего буффера и назначение нового цвета
     glClear(GL_COLOR_BUFFER_BIT);
-    // Меняем буфферы окна
+    // Смена буффера окна
     glfwSwapBuffers(window);
 
     // Главный цикл обновления окна, до тех пор пока не будет закрыто
     while(!glfwWindowShouldClose(window))
     {
-        // Определяем цвет фона окна
+        // Определение цвета фона окна
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-        // Очищаем задний буффер и назначаем новые цвета
+        // Очистка заднего буффера и назначение нового цвета
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        // Меняем буфферы окна, так как у каждого окна есть передний и задний буфер
+        // Указывание OPenGL какую программу хотим использовать
+        myShader.Activate();
+        // Связывание какой VAO использовать OpenGL
+        VAO1.Bind();
+        // Отрисовка треугольника используя примитив GL_TRIANGLES
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        // Смена буффера окна, так как у каждого окна есть передний и задний буфер
         /* Логика проста: передний буфер отрисовывается, пока задний подготавливается
         потом они меняются - задний отрисовывается, передний уходит на подготовку*/
         glfwSwapBuffers(window);
@@ -148,9 +111,11 @@ int main()
         glfwPollEvents();    
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    // Удаление созданных буфферов и программ
+    VAO1.Delete();
+    VBO1.Delete();
+    EBO1.Delete();
+    myShader.Deactivate();
 
     // Уничножение окна
     glfwDestroyWindow(window);
