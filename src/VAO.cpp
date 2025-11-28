@@ -1,6 +1,7 @@
 #include "VAO.h"
 
 VAO::VAO(){
+    // Генерация одного объекта в списке
     glGenVertexArrays(1, &ID);
 }
 
@@ -13,7 +14,7 @@ void VAO::LinkVBO(VBO VBO, GLuint layout){
     // normalized - хз
     // stride - сколько данных отводится на 1 вершину
     // pointer - указатель на пустоту))
-    glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     // Активация VertexAttribute, чтобы OpenGL понимал, что его нужно использовать
     glEnableVertexAttribArray(layout);
     VBO.Unbind();

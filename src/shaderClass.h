@@ -12,10 +12,14 @@ std::string get_shader_source(const char* filepath);
 
 class Shader{
     public:
+        // Ссылка на шейдерную программу
         GLuint ID;
+        // Конструктор шейдерной программы с 2 разными шейдерами
         Shader(const char* vertexFile, const char* fragmentFile);
 
+        // Активация шейдерной программы
         void Activate();
+        // Удаление шейдерной программы
         void Deactivate();
 };
 

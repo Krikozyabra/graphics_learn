@@ -13,12 +13,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // Определение углов треугольника
 GLfloat vertices[] = {
-    -0.5f, -0.5f * float(sqrt(3)) / 3, // нижний левый угол
-    0.5f, -0.5f * float(sqrt(3)) / 3, // нижний правый уго
-    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, // верхний угол
-    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, // между 1 и 3
-    0.5f / 2, 0.5f * float(sqrt(3)) / 6, // между 2 и 3
-    0.0f, -0.5f * float(sqrt(3)) / 3 // между 2 и 1
+    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // нижний левый угол
+    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // нижний правый уго
+    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // верхний угол
+    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // между 1 и 3
+    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // между 2 и 3
+    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // между 2 и 1
 };
 
 GLuint indicies[] = {
@@ -70,15 +70,20 @@ int main()
 
     Shader myShader("D:\\Projects\\graphics\\src\\shaders\\default.vert",
         "D:\\Projects\\graphics\\src\\shaders\\default.frag");
-
+    
+    // Создание и генерация списка вершин
     VAO VAO1;
     VAO1.Bind();
 
+    // Генерация вершинного буфера и привязывает к нему vertices
     VBO VBO1(vertices, sizeof(vertices));
+    // Генерация элементного буфера и привязывает к нему indicies
     EBO EBO1(indicies, sizeof(indicies));
-
+    
+    // Подвязка VBO к VAO и указание layuout из шейдера
     VAO1.LinkVBO(VBO1, 0);
 
+    // Отвязываем от контекста, чтобы не изменить случайно
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();

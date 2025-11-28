@@ -1,5 +1,6 @@
 #include "EBO.h"
 
+// Конструктор элементного буффера
 EBO::EBO(GLuint* indicies, GLsizeiptr size){
     // Генерирация контейнера только с 1 объектом
     glGenBuffers(1, &ID);

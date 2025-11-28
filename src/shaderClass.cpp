@@ -12,10 +12,13 @@ std::string get_shader_source(const char* filepath){
     throw(errno);
 }
 
+// Конструктор шейдерной программы с 2 разными шейдерами
 Shader::Shader(const char* vertexFile, const char* fragmentFile){
+    // Считываение исходного кода шейдеров
     std::string vertexCode = get_shader_source(vertexFile);
     std::string fragmentCode = get_shader_source(fragmentFile);
 
+    // Перевод std::string в char*
     const char* vertexSource = vertexCode.c_str();
     const char* fragmentSource = fragmentCode.c_str();
 
@@ -62,10 +65,12 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile){
     glDeleteShader(fragmentShader);
 }
 
+// Активация шейдерной программы
 void Shader::Activate(){
     glUseProgram(ID);
 }
 
+// Удаление шейдерной программы
 void Shader::Deactivate(){
     glDeleteProgram(ID);
 }
