@@ -13,12 +13,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // Определение углов треугольника
 GLfloat vertices[] = {
-    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // нижний левый угол
-    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // нижний правый уго
-    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // верхний угол
-    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // между 1 и 3
-    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // между 2 и 3
-    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // между 2 и 1
+    -0.5f, -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f, // нижний левый угол
+    0.5f,  -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f,// нижний правый уго
+    0.0f,   0.5f * float(sqrt(3)) * 2 / 3,  0.0f,   1.0f,   0.6f,   0.32f,// верхний угол
+    -0.25f, 0.5f * float(sqrt(3)) / 6,      0.0f,   0.9f,   0.45f,  0.17f,// между 1 и 3
+    0.25f,  0.5f * float(sqrt(3)) / 6,      0.0f,   0.9f,   0.45f,  0.17f,// между 2 и 3
+    0.0f,  -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f,// между 2 и 1
 };
 
 GLuint indicies[] = {
@@ -81,7 +81,8 @@ int main()
     EBO EBO1(indicies, sizeof(indicies));
     
     // Подвязка VBO к VAO и указание layuout из шейдера
-    VAO1.LinkVBO(VBO1, 0);
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void *)0);
+    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 
     // Отвязываем от контекста, чтобы не изменить случайно
     VAO1.Unbind();

@@ -10,8 +10,8 @@ class VAO{
         // Конструктор вершинного списка
         VAO();
 
-        // Привзяка VBO к VAO по определнному layout шейдера
-        void LinkVBO(VBO VBO, GLuint layout);
+        // Привзяка различных атррибутов (координаты, цвет) вершин к VAO по определнному layout шейдера
+        void LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset);
         // Привязка вершинного спика к контексту
         void Bind();
         // Отвязка вершинного списка от контекста

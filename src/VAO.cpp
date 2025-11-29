@@ -5,7 +5,7 @@ VAO::VAO(){
     glGenVertexArrays(1, &ID);
 }
 
-void VAO::LinkVBO(VBO VBO, GLuint layout){
+void VAO::LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizei stride, void* offset){
     VBO.Bind();
     // Настройка Vertex Attribute, чтобы указать OpenGL как читать VBO
     // index - с какого начать считывать
@@ -14,7 +14,7 @@ void VAO::LinkVBO(VBO VBO, GLuint layout){
     // normalized - хз
     // stride - сколько данных отводится на 1 вершину
     // pointer - указатель на пустоту))
-    glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
     // Активация VertexAttribute, чтобы OpenGL понимал, что его нужно использовать
     glEnableVertexAttribArray(layout);
     VBO.Unbind();
