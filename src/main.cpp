@@ -1,4 +1,10 @@
-#include "config.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
