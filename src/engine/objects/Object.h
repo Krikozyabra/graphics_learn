@@ -3,8 +3,8 @@
 
 class Object{
     public:
-        virtual void LoadInMemory();
-        virtual void Draw();
+        virtual void LoadInMemory() = 0;
+        virtual void Draw(GLuint scaleUniId) = 0;
 };
 
 #endif

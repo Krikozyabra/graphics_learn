@@ -1,8 +1,11 @@
 #include "VBO.h"
 
-VBO::VBO(GLfloat* vertices, GLsizeiptr size){
+VBO::VBO(){
     // Генерирация контейнера только с 1 объектом
     glGenBuffers(1, &ID);
+}
+
+void VBO::Init(GLfloat* vertices, GLsizeiptr size){
     // Указывание VBO как используемого в данном контексте и определение, что он конкретно GL_ARRAY_BUFFER
     glBindBuffer(GL_ARRAY_BUFFER, ID);
     // Передача списка вершин в буффер

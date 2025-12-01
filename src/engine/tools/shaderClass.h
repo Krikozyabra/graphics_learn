@@ -12,6 +12,7 @@ std::string get_shader_source(const char* filepath);
 
 class Shader{
     public:
+        const static GLuint numOfAttrib = 3*2;
         // Ссылка на шейдерную программу
         GLuint ID;
         // Конструктор шейдерной программы с 2 разными шейдерами

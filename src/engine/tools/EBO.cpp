@@ -1,10 +1,13 @@
 #include "EBO.h"
 
 // Конструктор элементного буффера
-EBO::EBO(GLuint* indicies, GLsizeiptr size){
+EBO::EBO(){
     // Генерирация контейнера только с 1 объектом
     glGenBuffers(1, &ID);
-    // Указывание VBO как используемого в данном контексте и определение, что он конкретно GL_ARRAY_BUFFER
+}
+
+void EBO::Init(GLuint* indicies, GLsizeiptr size){
+     // Указывание VBO как используемого в данном контексте и определение, что он конкретно GL_ARRAY_BUFFER
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
     // Передача списка вершин в буффер
     // И настройка его как STATIC - один раз определяется, много где используется

@@ -5,10 +5,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Cube.h"
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+
 
 using namespace std;
 
@@ -16,22 +18,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
-// Определение углов треугольника
-GLfloat vertices[] = {
-    -0.5f, -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f, // нижний левый угол
-    0.5f,  -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f,// нижний правый уго
-    0.0f,   0.5f * float(sqrt(3)) * 2 / 3,  0.0f,   1.0f,   0.6f,   0.32f,// верхний угол
-    -0.25f, 0.5f * float(sqrt(3)) / 6,      0.0f,   0.9f,   0.45f,  0.17f,// между 1 и 3
-    0.25f,  0.5f * float(sqrt(3)) / 6,      0.0f,   0.9f,   0.45f,  0.17f,// между 2 и 3
-    0.0f,  -0.5f * float(sqrt(3)) / 3,      0.0f,   0.8f,   0.3f,   0.02f,// между 2 и 1
-};
-
-GLuint indicies[] = {
-    0, 3, 5, // Нижний левый треугольник
-    3, 2, 4, // Нижний правый треугольник
-    5, 4, 1 // Верхний треугольник
-};
 
 int main()
 {
@@ -77,31 +63,16 @@ int main()
     Shader myShader("D:\\Projects\\graphics\\src\\shaders\\default.vert",
         "D:\\Projects\\graphics\\src\\shaders\\default.frag");
     
-    // Создание и генерация списка вершин
-    VAO VAO1;
-    VAO1.Bind();
+    Cube *cube1 = new Cube;
+    cube1->LoadInMemory();
 
-    // Генерация вершинного буфера и привязывает к нему vertices
-    VBO VBO1(vertices, sizeof(vertices));
-    // Генерация элементного буфера и привязывает к нему indicies
-    EBO EBO1(indicies, sizeof(indicies));
-    
-    // Подвязка VBO к VAO и указание layuout из шейдера
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void *)0);
-    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void *)(3 * sizeof(float)));
-
-    // Отвязываем от контекста, чтобы не изменить случайно
-    VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
-
+    GLuint scaleUniId = glGetUniformLocation(myShader.ID, "scale");
     // Определение цвета фона окна
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     // Очистка заднего буффера и назначение нового цвета
     glClear(GL_COLOR_BUFFER_BIT);
     // Смена буффера окна
     glfwSwapBuffers(window);
-
     // Главный цикл обновления окна, до тех пор пока не будет закрыто
     while(!glfwWindowShouldClose(window))
     {
@@ -112,9 +83,7 @@ int main()
         // Указывание OPenGL какую программу хотим использовать
         myShader.Activate();
         // Связывание какой VAO использовать OpenGL
-        VAO1.Bind();
-        // Отрисовка треугольника используя примитив GL_TRIANGLES
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        cube1->Draw(scaleUniId);
         // Смена буффера окна, так как у каждого окна есть передний и задний буфер
         /* Логика проста: передний буфер отрисовывается, пока задний подготавливается
         потом они меняются - задний отрисовывается, передний уходит на подготовку*/
@@ -124,9 +93,7 @@ int main()
     }
 
     // Удаление созданных буфферов и программ
-    VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
+    delete cube1;
     myShader.Deactivate();
 
     // Уничножение окна

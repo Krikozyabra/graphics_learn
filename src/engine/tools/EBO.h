@@ -8,7 +8,8 @@ class EBO{
         // Ссылка на элементный буффер
         GLuint ID;
         // Конструктор элементного буффера
-        EBO(GLuint* vertices, GLsizeiptr size);
+        EBO();
+        void Init(GLuint* indicies, GLsizeiptr size);
         
         // Подключение элементного буффера к контексту
         void Bind();

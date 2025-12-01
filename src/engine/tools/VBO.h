@@ -8,8 +8,8 @@ class VBO{
         // Ссылка вершинного буффера
         GLuint ID;
         // Конструктор вершинного буффера и привязка к нему verticies
-        VBO(GLfloat* vertices, GLsizeiptr size);
-        
+        VBO();
+        void Init(GLfloat* vertices, GLsizeiptr size);
         // Привязка вершинного буффера к контексту
         void Bind();
         // Отвязка вершинного буффера от контекста

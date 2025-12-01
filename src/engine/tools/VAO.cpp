@@ -1,4 +1,5 @@
 #include "VAO.h"
+#include <iostream>
 
 VAO::VAO(){
     // Генерация одного объекта в списке
